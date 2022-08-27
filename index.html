@@ -1061,15 +1061,17 @@
                 left: 30px;
                 top: 130px
             }
+
+            notice {
+                display: none;
+            }
+
             @media only screen and (max-width:820px) {
-                body {
-                    visibility: hidden;
+                body > * {
                     display: none;
-                    width: 0;
-                    height: 0;
                 }
-                body::after {
-                    content: "Please leave DevTools or use a PC"
+                notice {
+                    display: initial;
                 }
             }
         </style>
@@ -6775,6 +6777,9 @@
                 </tr>
             </tbody>
         </table>
+        <notice>
+            <h1>Please close DevTools and/or use a PC</h1>
+        </notice>
     </body>
     
     </html>
