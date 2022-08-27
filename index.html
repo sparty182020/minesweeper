@@ -1061,6 +1061,17 @@
                 left: 30px;
                 top: 130px
             }
+            @media only screen and (max-width:820px) {
+                body {
+                    visibility: hidden;
+                    display: none;
+                    width: 0;
+                    height: 0;
+                }
+                body::after {
+                    content: "Please leave DevTools or use a PC"
+                }
+            }
         </style>
         <!-- jQuery Code **DO NOT TOUCH** -->
         <script>
