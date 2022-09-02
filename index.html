@@ -4683,6 +4683,7 @@
             var cols;
             var mines;
             var zoomlvl;
+            var er
             /**
              * @inner
              * Grid Obj
@@ -4778,6 +4779,7 @@
                 var ad;
                 var aa, ac;
                 var Z;
+                er = undefined
                 aa = gameSettingString();
                 Z = Q();
                 gti = Z.gameTypeId;
@@ -5424,6 +5426,10 @@
             function gameDeath(Y) {
                 var ac, Z, aa;
                 var ab;
+                if (er) {
+                    return
+                }
+                er = 'lose'
                 document.getElementById("face").className = "facedead";
                 U.stop();
                 L = true;
@@ -5458,6 +5464,10 @@
                 var Z;
                 var ab;
                 var ac = false;
+                if (er) {
+                    return
+                }
+                er = 'win'
                 document.getElementById("face").className = "facewin";
                 U.stop();
                 L = true;
@@ -5490,17 +5500,6 @@
                     if (E.onWin) {
                         E.onWin(gti, ab)
                     }
-                }
-            }
-
-            /**
-             * Tests for localStorage
-             */
-            function testLocal() {
-                try {
-                    return "localStorage" in window && window.localStorage !== null
-                } catch (Y) {
-                    return false
                 }
             }
 
@@ -5629,25 +5628,7 @@
                     }
                 }
 
-                function get_browser() {
-                    var ua = navigator.userAgent, tem, M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-                    if (/trident/i.test(M[1])) {
-                        tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
-                        return { name: 'IE', version: (tem[1] || '') };
-                    }
-                    if (M[1] === 'Chrome') {
-                        tem = ua.match(/\bOPR|Edge\/(\d+)/)
-                        if (tem != null) { return { name: 'Opera', version: tem[1] }; }
-                    }
-                    M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-                    if ((tem = ua.match(/version\/(\d+)/i)) != null) { M.splice(1, 1, tem[1]); }
-                    return {
-                        name: M[0],
-                        version: M[1]
-                    };
-                }
-
-                k = (parseFloat(get_browser[1]) <= 7);
+                k = false
 
                 $(document).bind("gesturestart", function (af) {
                     C = true;
@@ -5733,12 +5714,10 @@
                                 if (!D) {
                                     if (!g) {
                                         ag = checkMineLayer(ah)
+                                        g = true
                                     }
                                     if (!ah.reveal1()) {
                                         gameDeath([ah])
-                                    }
-                                    if (!g) {
-                                        g = true
                                     }
                                 }
                                 D = false
@@ -5772,6 +5751,7 @@
                         ag.preventDefault()
                         E.newGame()
                     } else if (ag.which == 32) {
+                        ag.preventDefault()
                         square = c[hoveredSquareId];
                         square.flag()
                     } else if (ag.which == 68) {
