@@ -4668,13 +4668,13 @@
         })(window);
     </script>
     <!-- Main Minesweeper Code -->
-    <script>
+    <script type="text/javascript">
         /**
- * @class
- * @param A 
- * @param {Function} Q 
- * @param {Function} s 
- */
+         * @class
+         * @param A 
+         * @param {Function} Q 
+         * @param {Function} s 
+         */
 
         function Minesweeper(A, Q, s) {
             var E = this;
@@ -5714,7 +5714,7 @@
                     }
                     if (af.left) {
                         e = false;
-                        $(document).unbind("mousemove", Z).unbind("mousemove", faceSetter);
+                        $(document).unbind("mousemove", markFunc1).unbind("mousemove", faceSetter);
                         if (aa || !L) {
                             document.getElementById("face").className = "facesmile"
                         }
