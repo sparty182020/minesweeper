@@ -5367,10 +5367,10 @@
                     var ae = 1000 - (af - ad);
                     ac = setTimeout(startClock, ae);
                     ab++;
-                    eleSelector()
+                    setTimeCounter()
                 }
 
-                function eleSelector() {
+                function setTimeCounter() {
                     var ad = numSeg(ab);
                     document.getElementById("seconds_hundreds").className = "time" + ad[0];
                     document.getElementById("seconds_tens").className = "time" + ad[1];
@@ -5378,7 +5378,7 @@
                 }
                 this.start = function () {
                     aa = new Date().getTime() - ab * 1000;
-                    startClock
+                    startClock()
                 };
                 this.stop = function () {
                     clearTimeout(ac)
@@ -5388,7 +5388,7 @@
                 };
                 this.setTime = function (ad) {
                     ab = ad;
-                    eleSelector()
+                    setTimeCounter()
                 }
             }
 
