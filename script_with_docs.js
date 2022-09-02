@@ -1117,5 +1117,9 @@ function Minesweeper(A, Q, s) {
                 }
             }
         })
+
+        $(document).contextmenu(function (event) {
+            event.preventDefault()
+        })
     }
 };
