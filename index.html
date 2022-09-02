@@ -5567,7 +5567,7 @@
                 var ac;
 
                 /**
-                 * @param {MouseEvent} Z
+                 * @param {MouseEvent} ag
                  * Used for marking games
                  */
                 function markFunc1(ag) {
@@ -5679,7 +5679,7 @@
                         if (e) {
                             if (squareTest(ag.target) && !L) {
                                 ag.preventDefault();
-                                $(document).bind("mousemove", Z);
+                                $(document).bind("mousemove", markFunc1);
                                 document.getElementById("face").className = "faceooh";
                                 ac = undefined;
                                 markFunc1(ag)
