@@ -5466,8 +5466,14 @@
                 for (ad = 1; ad <= rows; ad++) {
                     for (Y = 1; Y <= cols; Y++) {
                         aa = I[ad][Y];
-                        if (!aa.isRevealed() && !aa.isFlagged()) {
+                        if (!aa.isRevealed() && !aa.isFlagged() && aa.isMine()) {
                             aa.setClass("square bombflagged")
+                        } else if (!aa.isRevealed() && !aa.isMine()) {
+                            if (aa.isFlagged()) {
+                                aa.flag()
+                            }
+                            aa.setClass("square open" + ag.getValue());
+                            aa.setRevealed(true);
                         }
                     }
                 }
