@@ -5660,6 +5660,7 @@
                     e = af.left || e;
                     v = af.right || v;
                     if (ag.ctrlKey && squareTest(ag.target) && !L) {
+                        if (er) return;
                         c[ag.target.id].flag();
                         isMouseDownForCtrlClick = true
                     } else {
@@ -5681,6 +5682,7 @@
                         } else {
                             if (v) {
                                 if (squareTest(ag.target) && !L) {
+                                    if (er) return;
                                     c[ag.target.id].flag()
                                 }
                                 return false
@@ -5698,6 +5700,15 @@
                         v = false;
                         isMouseDownForCtrlClick = false;
                         return
+                    }
+                    if (er) {
+                        if (ai.target.id == "face" && aa) {
+                            E.newGame()
+                            aa = false
+                        }
+                        else {
+                            return
+                        }
                     }
                     if (af.left) {
                         e = false;
@@ -5722,12 +5733,7 @@
                                 }
                                 D = false
                             }
-                        } else {
-                            if (ai.target.id == "face" && aa) {
-                                E.newGame()
-                            }
                         }
-                        aa = false
                     }
                     if (af.right) {
                         v = false;
@@ -5747,6 +5753,10 @@
                 });
 
                 $(document).keydown(function (ag) {
+                    if (ag.which !== 83 && er) {
+                        ag.preventDefault()
+                        return
+                    }
                     if (ag.which == 83) {
                         ag.preventDefault()
                         E.newGame()

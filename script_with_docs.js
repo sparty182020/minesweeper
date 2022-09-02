@@ -1,3 +1,10 @@
+/**
+ * @class
+ * @param A 
+ * @param {Function} Q 
+ * @param {Function} s 
+ */
+
 function Minesweeper(A, Q, s) {
     var E = this;
     var gti;
@@ -5,6 +12,7 @@ function Minesweeper(A, Q, s) {
     var cols;
     var mines;
     var zoomlvl;
+    var er
     /**
      * @inner
      * Grid Obj
@@ -39,7 +47,7 @@ function Minesweeper(A, Q, s) {
      * @inner
      * Time Varible
      */
-    var U = new F();
+    var U = new TimeManager();
     /**
      * @inner
      * Game Over Varible
@@ -94,13 +102,14 @@ function Minesweeper(A, Q, s) {
      * Likely First-Press protection
      */
     var y;
-    P();
+    Setup();
     this.newGame = function (ae, Y) {
         var af, ab;
         var ad;
         var aa, ac;
         var Z;
-        aa = S();
+        er = undefined
+        aa = gameSettingString();
         Z = Q();
         gti = Z.gameTypeId;
         rows = Z.numRows;
@@ -121,13 +130,13 @@ function Minesweeper(A, Q, s) {
                 mines = Y.numMines
             }
         }
-        ac = (S() != aa);
-        w(zoomlvl);
+        ac = (gameSettingString() != aa);
+        setZoom(zoomlvl);
         if (ac) {
-            V()
+            gridGen()
         }
-        l(ae);
-        q();
+        mineLayer(ae);
+        setO();
         p = !!ae;
         K = mines;
         G = rows * cols - mines;
@@ -161,7 +170,7 @@ function Minesweeper(A, Q, s) {
                 U.setTime(Y.time)
             } else { }
         }
-        W();
+        updateMines();
         L = false;
         g = false;
         D = false;
@@ -175,9 +184,9 @@ function Minesweeper(A, Q, s) {
         hoveredSquareId = ""
     };
     this.resize = function (Y) {
-        var Z = n(Y);
-        w(Y);
-        $("#game-container").removeClass("z" + zoomlvl * 100).addClass("z" + Y * 100);
+        var Z = zoomMargin(Y);
+        setZoom(Y);
+        $("#game-container").removeClass("getGrid" + zoomlvl * 100).addClass("getGrid" + Y * 100);
         $("#face").css({
             "margin-left": Math.floor(Z) + "px",
             "margin-right": Math.ceil(Z) + "px"
@@ -188,7 +197,7 @@ function Minesweeper(A, Q, s) {
         return g
     };
     this.export_ = function () {
-        var aa = z(true);
+        var aa = getGrid(true);
         var Z = U.getTime();
         var Y = {
             version: 1,
@@ -262,7 +271,7 @@ function Minesweeper(A, Q, s) {
      * @description
      * Sets the zoom values for the game
      */
-    function w(Y) {
+    function setZoom(Y) {
         $("#game-container, #game").width(Y * (cols * 16 + 20));
         $("#game").height(Y * (rows * 16 + 30 + 26 + 6))
     }
@@ -271,25 +280,25 @@ function Minesweeper(A, Q, s) {
      * 
      * @param {number} Y Zoom Level
      * @description
-     * Returns a special margin value for use in the V function as the margins of the smile
+     * Returns a special margin value for use in the gridGen function as the margins of the smile
      */
-    function n(Y) {
+    function zoomMargin(Y) {
         return (Y * cols * 16 - 6 * Math.ceil(Y * 13) - Y * 2 * 6 - Y * 26) / 2
     }
 
     /**
      * Returns a string with a "ROW_COL_MINES" format
      */
-    function S() {
+    function gameSettingString() {
         return rows + "_" + cols + "_" + mines
     }
     /**
      * Makes a new minesweeper grid for the site
      */
-    function V() {
+    function gridGen() {
         var ab, Y;
         var Z = [];
-        var aa = n(zoomlvl);
+        var aa = zoomMargin(zoomlvl);
         Z.push('<div class="bordertl"></div>');
         for (Y = 0; Y < cols; Y++) {
             Z.push('<div class="bordertb"></div>')
@@ -349,7 +358,7 @@ function Minesweeper(A, Q, s) {
      * - serializeToObj
      * - deserializeFromObj
      */
-    function u(ad, Z) {
+    function squareData(ad, Z) {
         var ab = 0;
         var aa = false;
         var Y = false;
@@ -425,7 +434,7 @@ function Minesweeper(A, Q, s) {
                             ag.setClass("square open" + ag.getValue());
                             ag.setRevealed(true);
                             if (!ag.isHidden() && --G == 0) {
-                                J();
+                                gameWin();
                                 return true
                             }
                             if (ag.getValue() == 0 && !ag.isHidden()) {
@@ -443,7 +452,7 @@ function Minesweeper(A, Q, s) {
                     }
                 }
             }
-            q();
+            setO();
             return true
         };
         this.flag = function (ae) {
@@ -460,7 +469,7 @@ function Minesweeper(A, Q, s) {
                     }
                     aa = false;
                     K++;
-                    W()
+                    updateMines()
                 } else {
                     if (Y) {
                         this.setClass("square blank");
@@ -469,13 +478,13 @@ function Minesweeper(A, Q, s) {
                         this.setClass("square bombflagged");
                         aa = true;
                         K--;
-                        W();
+                        updateMines();
                         if (ae) {
                             this._showFlagAnimation()
                         }
                     }
                 }
-                q()
+                setO()
             }
         };
         this._showFlagAnimation = function (af) {
@@ -541,7 +550,7 @@ function Minesweeper(A, Q, s) {
      * @description This is the main function used to lay the mines
      * @param {Object?} ab
      */
-    function l(ab) {
+    function mineLayer(ab) {
         var ad, Y, Z;
         var aa;
         I = [];
@@ -551,7 +560,7 @@ function Minesweeper(A, Q, s) {
         for (ad = 0; ad <= rows + 1; ad++) {
             I[ad] = [];
             for (Y = 0; Y <= cols + 1; Y++) {
-                aa = new u(ad, Y);
+                aa = new squareData(ad, Y);
                 I[ad][Y] = aa;
                 c[ad + "_" + Y] = aa;
                 if (!aa.isHidden()) {
@@ -577,7 +586,7 @@ function Minesweeper(A, Q, s) {
             }
         } else {
             for (Z = 0; Z < mines; Z++) {
-                M.splice(Math.floor(Math.random() * M.length), 1)[0].plantMine() //#f00
+                M.splice(Math.floor(Math.random() * M.length), 1)[0].plantMine()
             }
         }
     }
@@ -589,7 +598,7 @@ function Minesweeper(A, Q, s) {
      * @decription
      * Pull the current grid state
      */
-    function z(Z) {
+    function getGrid(Z) {
         var aa = [];
         var ab, Y;
         for (ab = 0; ab <= rows + 1; ab++) {
@@ -604,8 +613,8 @@ function Minesweeper(A, Q, s) {
     /**
      * Pulls the grid state and saves it to the "o" var (called at start, reveal1, and flag)
      */
-    function q() {
-        var Y = z();
+    function setO() {
+        var Y = getGrid();
         o = {
             gridObj: Y
         }
@@ -614,7 +623,7 @@ function Minesweeper(A, Q, s) {
     /**
      * @deprecated
      */
-    function t(ag) {
+    function checkMineLayer(ag) {
         var Y = ag.getRow();
         var ae = ag.getCol();
         var ad, Z;
@@ -623,7 +632,7 @@ function Minesweeper(A, Q, s) {
         var aa;
         if (!p && !y) {
             if (ag.isMine()) {
-                M.splice(Math.floor(Math.random() * M.length), 1)[0].plantMine(); //#f00
+                M.splice(Math.floor(Math.random() * M.length), 1)[0].plantMine();
                 ag.unplantMine();
                 M.push(ag)
             }
@@ -659,7 +668,7 @@ function Minesweeper(A, Q, s) {
     /**
      * Game ID Generator
      */
-    function j() {
+    function gameIDGen() {
         var Y = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var Z;
         r = "";
@@ -677,31 +686,30 @@ function Minesweeper(A, Q, s) {
      * @description
      * Time managment Sub-function holder used to keep track of the time
      */
-
-    function F() {
+    function TimeManager() {
         var aa;
         var ab;
         var ac;
 
-        function Z() {
+        function startClock() {
             var ag = new Date().getTime();
             var ad = ab * 1000;
             var af = ag - aa;
             var ae = 1000 - (af - ad);
-            ac = setTimeout(Z, ae);
+            ac = setTimeout(startClock, ae);
             ab++;
-            Y()
+            setTimeCounter()
         }
 
-        function Y() {
-            var ad = x(ab);
+        function setTimeCounter() {
+            var ad = numSeg(ab);
             document.getElementById("seconds_hundreds").className = "time" + ad[0];
             document.getElementById("seconds_tens").className = "time" + ad[1];
             document.getElementById("seconds_ones").className = "time" + ad[2]
         }
         this.start = function () {
             aa = new Date().getTime() - ab * 1000;
-            Z()
+            startClock()
         };
         this.stop = function () {
             clearTimeout(ac)
@@ -711,27 +719,27 @@ function Minesweeper(A, Q, s) {
         };
         this.setTime = function (ad) {
             ab = ad;
-            Y()
+            setTimeCounter()
         }
     }
 
     /**
-     * Sets the time to the counter
+     * Sets the mines to the counter
      */
-    function W() {
-        var Y = x(K);
+    function updateMines() {
+        var Y = numSeg(K);
         document.getElementById("mines_hundreds").className = "time" + Y[0];
         document.getElementById("mines_tens").className = "time" + Y[1];
         document.getElementById("mines_ones").className = "time" + Y[2]
     }
     /**
      * 
-     * @param {number} Y Time Value (seconds)
+     * @param {number} Y Number Value
      * 
      * @returns {[string|number,number,number]} 
-     * 3 segment time value (seconds) where if Y is negitive, value 1 is equal to the string "-"
+     * 3 segment number value where if Y is negitive, value 1 is equal to the string "-"
      */
-    function x(Y) {
+    function numSeg(Y) {
         Y = Math.min(Y, 999);
         if (Y >= 0) {
             return [Math.floor(Y / 100), Math.floor((Y % 100) / 10), Y % 10]
@@ -744,9 +752,13 @@ function Minesweeper(A, Q, s) {
      * @param {Object} Y
      * Game Death Function
      */
-    function R(Y) {
+    function gameDeath(Y) {
         var ac, Z, aa;
         var ab;
+        if (er) {
+            return
+        }
+        er = 'lose'
         document.getElementById("face").className = "facedead";
         U.stop();
         L = true;
@@ -775,22 +787,32 @@ function Minesweeper(A, Q, s) {
     /**
      * Game Win Function
      */
-    function J() {
+    function gameWin() {
         var ad, Y;
         var aa;
         var Z;
         var ab;
         var ac = false;
+        if (er) {
+            return
+        }
+        er = 'win'
         document.getElementById("face").className = "facewin";
         U.stop();
         L = true;
         K = 0;
-        W();
+        updateMines();
         for (ad = 1; ad <= rows; ad++) {
             for (Y = 1; Y <= cols; Y++) {
                 aa = I[ad][Y];
-                if (!aa.isRevealed() && !aa.isFlagged()) {
+                if (!aa.isRevealed() && !aa.isFlagged() && aa.isMine()) {
                     aa.setClass("square bombflagged")
+                } else if (!aa.isRevealed() && !aa.isMine()) {
+                    if (aa.isFlagged()) {
+                        aa.flag()
+                    }
+                    aa.setClass("square open" + aa.getValue());
+                    aa.setRevealed(true);
                 }
             }
         }
@@ -811,22 +833,11 @@ function Minesweeper(A, Q, s) {
     }
 
     /**
-     * Tests for localStorage
-     */
-    function O() {
-        try {
-            return "localStorage" in window && window.localStorage !== null
-        } catch (Y) {
-            return false
-        }
-    }
-
-    /**
      * 
      * @param {HTMLElement} Y Elemet Pressed
      * @returns {Boolean} Returns true if the element pressed has a class starting with "square"
      */
-    function T(Y) {
+    function squareTest(Y) {
         return Y.className.substring(0, 6) == "square"
     }
 
@@ -835,7 +846,7 @@ function Minesweeper(A, Q, s) {
      * @returns {{right:Boolean, left:Boolean}}
      * tests what mouse button was pressed
      */
-    function f(Z) {
+    function mousePressTest(Z) {
         var Y = {};
         if (k) {
             Y.left = Z.button == 1 || Z.button == 3 || Z.button == 4;
@@ -850,11 +861,11 @@ function Minesweeper(A, Q, s) {
     /**
      * @param aa Square
      * @param {String} Z Sets the class name to this if it isn't revealed, marked, and flagged
-     * @param {String} Y Sets the class name to this if it isn't revealed and if it is marked
+     * @param {String} Y Sets the class name to this if it isn't revealed, and if it is marked
      * @description
      * Called for use in a square game
      */
-    function h(aa, Z, Y) {
+    function classSetter2(aa, Z, Y) {
         if (!aa.isRevealed()) {
             if (aa.isMarked()) {
                 aa.setClass(Y)
@@ -873,11 +884,11 @@ function Minesweeper(A, Q, s) {
      * @description
      * Called for use in a marking game
      */
-    function b(ac, ab, aa) {
+    function classSetter3(ac, ab, aa) {
         var Y, Z;
         for (Y = -1; Y <= 1; Y++) {
             for (Z = -1; Z <= 1; Z++) {
-                h(I[ac.getRow() + Y][ac.getCol() + Z], ab, aa)
+                classSetter2(I[ac.getRow() + Y][ac.getCol() + Z], ab, aa)
             }
         }
     }
@@ -885,37 +896,37 @@ function Minesweeper(A, Q, s) {
     /**
      * Game Setup for eventListeners, and grabbing elements, and other required things
      */
-    function P() {
+    function Setup() {
         var aa = false;
         var ac;
 
         /**
-         * @param {MouseEvent} Z
+         * @param {MouseEvent} ag
          * Used for marking games
          */
-        function Z(ag) {
-            if (ag.type === "touchmove" && !ae(ag)) {
+        function markFunc1(ag) {
+            if (ag.type === "touchmove") {
                 return
             }
-            var af = Y(ag);
+            var af = eleSelector(ag);
             if (af != ac && !D) {
                 if (v) {
                     if (ac) {
-                        b(c[ac.id], "square blank", "square question")
+                        classSetter3(c[ac.id], "square blank", "square question")
                     }
-                    if (T(af)) {
-                        b(c[af.id], "square open0", "square questionpressed")
+                    if (squareTest(af)) {
+                        classSetter3(c[af.id], "square open0", "square questionpressed")
                     }
                 } else {
                     if (ac) {
-                        h(c[ac.id], "square blank", "square question")
+                        classSetter2(c[ac.id], "square blank", "square question")
                     }
-                    if (T(af)) {
-                        h(c[af.id], "square open0", "square questionpressed")
+                    if (squareTest(af)) {
+                        classSetter2(c[af.id], "square open0", "square questionpressed")
                     }
                 }
             }
-            ac = (T(af)) ? af : undefined
+            ac = (squareTest(af)) ? af : undefined
         }
 
         /**
@@ -923,20 +934,21 @@ function Minesweeper(A, Q, s) {
          * @param {TouchEvent} ag
          * Changes the face upon touching it
          */
-        function ad(ag) {
-            if (ag.type === "touchmove" && !ae(ag)) {
+        function faceSetter(ag) {
+            if (ag.type === "touchmove") {
                 return
             }
-            var af = Y(ag);
+            var af = eleSelector(ag);
             document.getElementById("face").className = (af.id == "face") ? "facepressed" : "facesmile"
         }
+
         /**
          * @param {TouchEvent} af Triggering Event
          * @returns {HTMLElement}
          * @description
          * Grabs the element the user is touching
          */
-        function Y(af) {
+        function eleSelector(af) {
             if (af.type === "touchmove" || af.type === "touchend") {
                 var ag = af.originalEvent.changedTouches[0];
                 return document.elementFromPoint(ag.clientX, ag.clientY)
@@ -945,67 +957,61 @@ function Minesweeper(A, Q, s) {
             }
         }
 
-        /**
-         * @param {TouchEvent} af
-         * @returns {Boolean}
-         * Tests for a difference
-         */
-        function ae(af) {
-            if (!d) {
-                return false
-            }
-            var ag = (af.originalEvent.changedTouches[0].identifier === d);
-            return ag
-        }
-        k = $.browser.msie && parseFloat($.browser.version) <= 7;
+        k = false
+
         $(document).bind("gesturestart", function (af) {
             C = true;
-            ab()
+            scrollManager()
         });
+
         $(document).bind("gestureend", function (af) {
             C = false
         });
-        $(document).bind("scroll", ab);
 
-        function ab() {
+        $(document).bind("scroll", scrollManager);
+
+        function scrollManager() {
             if (!d) {
                 return
             }
             d = null;
             if (ac) {
-                h(c[ac.id], "square blank", "square question");
+                classSetter2(c[ac.id], "square blank", "square question");
                 ac = undefined
             }
             if (!L) {
                 document.getElementById("face").className = "facesmile"
             }
         }
+
         $(document).mousedown(function (ag) {
-            var af = f(ag);
+            var af = mousePressTest(ag);
             e = af.left || e;
             v = af.right || v;
-            if (ag.ctrlKey && T(ag.target) && !L) {
+            if (ag.ctrlKey && squareTest(ag.target) && !L) {
+                if (er) return;
                 c[ag.target.id].flag();
                 isMouseDownForCtrlClick = true
             } else {
                 if (e) {
-                    if (T(ag.target) && !L) {
+                    if (squareTest(ag.target) && !L) {
                         ag.preventDefault();
-                        $(document).bind("mousemove", Z);
+                        $(document).bind("mousemove", markFunc1);
                         document.getElementById("face").className = "faceooh";
                         ac = undefined;
-                        Z(ag)
+                        markFunc1(ag)
                     } else {
                         if (ag.target.id == "face") {
                             ag.preventDefault();
                             aa = true;
-                            $(document).bind("mousemove", ad);
+                            $(document).bind("mousemove", faceSetter);
                             document.getElementById("face").className = "facepressed"
                         }
                     }
                 } else {
                     if (v) {
-                        if (T(ag.target) && !L) {
+                        if (squareTest(ag.target) && !L) {
+                            if (er) return;
                             c[ag.target.id].flag()
                         }
                         return false
@@ -1013,8 +1019,9 @@ function Minesweeper(A, Q, s) {
                 }
             }
         });
+
         $(document).mouseup(function (ai) {
-            var af = f(ai);
+            var af = mousePressTest(ai);
             var ah;
             var ag;
             if (isMouseDownForCtrlClick) {
@@ -1023,45 +1030,47 @@ function Minesweeper(A, Q, s) {
                 isMouseDownForCtrlClick = false;
                 return
             }
+            if (er) {
+                if (ai.target.id == "face" && aa) {
+                    E.newGame()
+                    aa = false
+                }
+                else {
+                    return
+                }
+            }
             if (af.left) {
                 e = false;
-                $(document).unbind("mousemove", Z).unbind("mousemove", ad);
+                $(document).unbind("mousemove", markFunc1).unbind("mousemove", faceSetter);
                 if (aa || !L) {
                     document.getElementById("face").className = "facesmile"
                 }
-                if (T(ai.target) && !L) {
+                if (squareTest(ai.target) && !L) {
                     ah = c[ai.target.id];
                     if (v) {
                         D = true;
-                        b(c[ai.target.id], "square blank", "square question");
+                        classSetter3(c[ai.target.id], "square blank", "square question");
                     } else {
                         if (!D) {
                             if (!g) {
-                                ag = t(ah)
+                                ag = checkMineLayer(ah)
+                                g = true
                             }
                             if (!ah.reveal1()) {
-                                R([ah])
-                            }
-                            if (!g) {
-                                g = true
+                                gameDeath([ah])
                             }
                         }
                         D = false
                     }
-                } else {
-                    if (ai.target.id == "face" && aa) {
-                        E.newGame()
-                    }
                 }
-                aa = false
             }
             if (af.right) {
                 v = false;
-                if (T(ai.target) && !L) {
+                if (squareTest(ai.target) && !L) {
                     if (e) {
                         ah = c[ai.target.id];
                         D = true;
-                        b(ah, "square blank", "square question");
+                        classSetter3(ah, "square blank", "square question");
                     } else {
                         D = false
                     }
@@ -1071,30 +1080,38 @@ function Minesweeper(A, Q, s) {
                 }
             }
         });
+
         $(document).keydown(function (ag) {
+            if (ag.which !== 83 && er) {
+                ag.preventDefault()
+                return
+            }
             if (ag.which == 83) {
                 ag.preventDefault()
                 E.newGame()
             } else if (ag.which == 32) {
+                ag.preventDefault()
                 square = c[hoveredSquareId];
                 square.flag()
             } else if (ag.which == 68) {
-                R([c[hoveredSquareId]])
+                gameDeath([c[hoveredSquareId]])
             } else if (ag.which == 70) {
                 document.body.requestFullscreen()
             } else if (ag.key == "~") {
-                J()
+                gameWin()
             } else {
 
             }
         });
+
         $("#game").mouseover(function (af) {
-            if (T(af.target)) {
+            if (squareTest(af.target)) {
                 hoveredSquareId = af.target.id
             }
         });
+
         $("#game").mouseout(function (af) {
-            if (T(af.target)) {
+            if (squareTest(af.target)) {
                 if (hoveredSquareId = af.target.id) {
                     hoveredSquareId = ""
                 }
