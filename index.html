@@ -5788,7 +5788,7 @@
                         }
                     }
                 })
-
+                
                 $(document).contextmenu(function (event) {
                     event.preventDefault()
                 })
@@ -5797,19 +5797,13 @@
     </script>
     <!-- Page Minesweeper Code -->
     <script>
-        var minesweeper = new Minesweeper([
-                [2, 20, 59],
-                [2, 18, 54],
-                [1, 15, 51],
-                [1, 10, 45]
-            ], getOptions, setOptions)
-        
-        function run() {
+        $(function () {
             var gameType = 'expert';
             var zoom = '200';
             var position = 'center';
             var isNightMode = false;
             var hashParts, i;
+            var minesweeper;
 
             if (!!location.hash && location.hash.length > 1) {
                 hashParts = location.hash.substring(1).split('-');
@@ -5818,8 +5812,8 @@
                     switch (hashParts[i]) {
                         case 'beginner': gameType = 'beginner'; break;
                         case 'intermediate': gameType = 'intermediate'; break;
-                        case '100': zoom = '100'; break;
                         case '150': zoom = '150'; break;
+                        case '200': zoom = '200'; break;
                         case 'left': position = 'left'; break;
                         case 'night': isNightMode = true; break;
                     }
@@ -5836,7 +5830,14 @@
 
             if (isNightMode) {
                 toggleNightMode(isNightMode);
-            };
+            }
+
+            minesweeper = new Minesweeper([
+                [2, 20, 59],
+                [2, 18, 54],
+                [1, 15, 51],
+                [1, 10, 45]
+            ], getOptions, setOptions);
 
             minesweeper.onWin = function (gameTypeId, time) {
                 var mode;
@@ -6083,10 +6084,7 @@
                     location.hash = '';
                 }
             }
-        }
-        $(function() {
-            run()
-        })
+        });
     </script>
     <noscript>Please enable JavaScript so that this page can properly work! Thanks!</noscript>
 </head>
@@ -6108,7 +6106,8 @@
                                     | <span title="Fullscreen the minesweeper window"><a
                                             href="javascript:document.body.requestFullscreen()">Fullscreen</a></span>
                                 </div>
-                                <div id="game"
+                                <div id="game" oncontextmenu="(e) => {e.preventDefault()}"
+                                    ondrag="(e) => {e.preventDefault()}" ondragstart="(e) => {e.preventDefault()}"
                                     style="width: 1000px; height: 636px;">
                                     <div class="bordertl"></div>
                                     <div class="bordertb"></div>
