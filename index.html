@@ -5222,18 +5222,18 @@
              * @param {Object?} ab
              */
             function mineLayer(ab) {
-                var ad, Y, Z;
+                var X, Y, Z;
                 var aa;
                 I = [];
                 c = [];
                 M = [];
                 Z = 0;
-                for (ad = 0; ad <= rows + 1; ad++) {
-                    I[ad] = [];
+                for (X = 0; X <= rows + 1; X++) {
+                    I[X] = [];
                     for (Y = 0; Y <= cols + 1; Y++) {
-                        aa = new squareData(ad, Y);
-                        I[ad][Y] = aa;
-                        c[ad + "_" + Y] = aa;
+                        aa = new squareData(X, Y);
+                        I[X][Y] = aa;
+                        c[X + "_" + Y] = aa;
                         if (!aa.isHidden()) {
                             M[Z++] = aa
                         }
@@ -5241,15 +5241,15 @@
                 }
                 if (ab) {
                     var ac = ab.gridObj;
-                    for (ad = 0; ad <= rows + 1; ad++) {
+                    for (X = 0; X <= rows + 1; X++) {
                         for (Y = 0; Y <= cols + 1; Y++) {
-                            I[ad][Y].deserializeFromObj(ac[ad][Y])
+                            I[X][Y].deserializeFromObj(ac[X][Y])
                         }
                     }
                     M = [];
-                    for (ad = 0; ad <= rows + 1; ad++) {
+                    for (X = 0; X <= rows + 1; X++) {
                         for (Y = 0; Y <= cols + 1; Y++) {
-                            aa = I[ad][Y];
+                            aa = I[X][Y];
                             if (!aa.isHidden() && !aa.isMine()) {
                                 M.push(aa)
                             }
@@ -5271,11 +5271,11 @@
              */
             function getGrid(Z) {
                 var aa = [];
-                var ab, Y;
-                for (ab = 0; ab <= rows + 1; ab++) {
+                var X, Y;
+                for (X = 0; X <= rows + 1; X++) {
                     aa[ab] = [];
                     for (Y = 0; Y <= cols + 1; Y++) {
-                        aa[ab][Y] = I[ab][Y].serializeToObj(Z)
+                        aa[X][Y] = I[X][Y].serializeToObj(Z)
                     }
                 }
                 return aa
@@ -5296,7 +5296,7 @@
              */
             function checkMineLayer(ag) {
                 var Y = ag.getRow();
-                var ae = ag.getCol();
+                var X = ag.getCol();
                 var ad, Z;
                 var ac;
                 var af;
@@ -5310,13 +5310,13 @@
                     var af = [];
                     for (var ab = 0; ab < M.length; ab++) {
                         aa = M[ab];
-                        if (aa.getRow() < Y - 1 || aa.getRow() > Y + 1 || aa.getCol() < ae - 1 || aa.getCol() > ae + 1) {
+                        if (aa.getRow() < Y - 1 || aa.getRow() > Y + 1 || aa.getCol() < X - 1 || aa.getCol() > X + 1) {
                             af.push(aa)
                         }
                     }
                     for (ad = -1; ad <= 1; ad++) {
                         for (Z = -1; Z <= 1; Z++) {
-                            ac = I[Y + ad][ae + Z];
+                            ac = I[Y + ad][X + Z];
                             if (ac.isMine() && af.length > 0) {
                                 af.splice(Math.floor(Math.random() * af.length), 1)[0].plantMine();
                                 ac.unplantMine()
@@ -5325,10 +5325,10 @@
                     }
                 }
                 U.start();
-                if ((Y == 1 && ae == 1) || (Y == 1 && ae == cols) || (Y == rows && ae == 1) || (Y == rows && ae == cols)) {
+                if ((Y == 1 && X == 1) || (Y == 1 && X == cols) || (Y == rows && X == 1) || (Y == rows && X == cols)) {
                     return 1
                 } else {
-                    if (Y == 1 || Y == rows || ae == 1 || ae == cols) {
+                    if (Y == 1 || Y == rows || X == 1 || X == cols) {
                         return 2
                     } else {
                         return 3
@@ -5797,13 +5797,13 @@
     </script>
     <!-- Page Minesweeper Code -->
     <script>
-        $(function () {
+        var minesweeper;
+        function run () {
             var gameType = 'expert';
             var zoom = '200';
             var position = 'center';
             var isNightMode = false;
             var hashParts, i;
-            var minesweeper;
 
             if (!!location.hash && location.hash.length > 1) {
                 hashParts = location.hash.substring(1).split('-');
@@ -6084,12 +6084,12 @@
                     location.hash = '';
                 }
             }
-        });
+        }
     </script>
     <noscript>Please enable JavaScript so that this page can properly work! Thanks!</noscript>
 </head>
 
-<body class="night-mode" style="margin-left: 0px;">
+<body class="night-mode" style="margin-left: 0px;" onload="run()">
     <table border="0" cellpadding="0" cellspacing="0" width="100%" height="100%">
         <tbody>
             <tr>
