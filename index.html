@@ -5797,7 +5797,13 @@
     </script>
     <!-- Page Minesweeper Code -->
     <script>
-        var minesweeper;
+        var minesweeper = new Minesweeper([
+                [2, 20, 59],
+                [2, 18, 54],
+                [1, 15, 51],
+                [1, 10, 45]
+            ], getOptions, setOptions)
+        
         function run() {
             var gameType = 'expert';
             var zoom = '200';
@@ -5812,8 +5818,8 @@
                     switch (hashParts[i]) {
                         case 'beginner': gameType = 'beginner'; break;
                         case 'intermediate': gameType = 'intermediate'; break;
+                        case '100': zoom = '100'; break;
                         case '150': zoom = '150'; break;
-                        case '200': zoom = '200'; break;
                         case 'left': position = 'left'; break;
                         case 'night': isNightMode = true; break;
                     }
@@ -5830,14 +5836,7 @@
 
             if (isNightMode) {
                 toggleNightMode(isNightMode);
-            }
-
-            minesweeper = new Minesweeper([
-                [2, 20, 59],
-                [2, 18, 54],
-                [1, 15, 51],
-                [1, 10, 45]
-            ], getOptions, setOptions);
+            };
 
             minesweeper.onWin = function (gameTypeId, time) {
                 var mode;
@@ -6085,7 +6084,7 @@
                 }
             }
         }
-        $("body").load((e)=> {
+        $(function() {
             run()
         })
     </script>
